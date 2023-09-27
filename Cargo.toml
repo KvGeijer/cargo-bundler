@@ -1,0 +1,20 @@
+[package]
+name = "cargo-bundler"
+version = "0.1.0"
+authors = ["Kåre von Geijer <kare.kvg@gmail.com>"]
+description = "Creates a single source-file version of a Cargo package. Modifies paths such as use paths to still be correct in the new structure."
+homepage = "https://github.com/KvGeijer/cargo-bundler"
+repository = "https://github.com/KvGeijer/cargo-bundler"
+keywords = ["single-file", "bundle", "merge", "flatten", "cli"]
+categories = ["command-line-utilities"]
+readme = "README.md"
+license = "MIT"
+edition = "2021"
+
+[[bin]]
+name = "cargo-bundler"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+syn = { version = "2.0", features = ["full", "printing", "visit-mut", "extra-traits"] }
