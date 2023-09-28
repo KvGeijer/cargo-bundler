@@ -16,5 +16,6 @@ name = "cargo-bundler"
 path = "src/main.rs"
 
 [dependencies]
+cargo_metadata = "0.18.0"
 clap = { version = "4.4", features = ["derive"] }
 syn = { version = "2.0", features = ["full", "printing", "visit-mut", "extra-traits"] }
