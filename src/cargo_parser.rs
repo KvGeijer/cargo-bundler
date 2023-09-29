@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 pub fn parse_access_paths(
     package_path: &Path,
     bin_target: Option<&str>,
-) -> Result<(PathBuf, Option<PathBuf>), String> {
+) -> Result<(PathBuf, Option<(PathBuf, String)>), String> {
     let metadata = get_metadata(package_path)?;
     let targets = &metadata.root_package().unwrap().targets;
     let bin = select_binary(targets, bin_target)?;
@@ -48,13 +48,17 @@ fn target_is(target: &cargo_metadata::Target, target_kind: &str) -> bool {
     target.kind.iter().any(|kind| kind == target_kind)
 }
 
-fn get_lib(targets: &[cargo_metadata::Target]) -> Option<PathBuf> {
+fn get_lib(targets: &[cargo_metadata::Target]) -> Option<(PathBuf, String)> {
     let libs: Vec<_> = targets.iter().filter(|t| target_is(t, "lib")).collect();
     assert!(
         libs.len() <= 1,
         "Multiple library targets found. Not supported." // This should not be possible
     );
-    libs.into_iter()
-        .next()
-        .map(|target| target.src_path.clone().into())
+
+    libs.into_iter().next().map(|target| {
+        (
+            target.src_path.clone().into(),
+            target.name.replace("-", "_").clone(),
+        )
+    })
 }

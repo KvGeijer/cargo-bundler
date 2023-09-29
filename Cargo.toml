@@ -19,4 +19,4 @@ path = "src/main.rs"
 cargo_metadata = "0.18.0"
 clap = { version = "4.4", features = ["derive"] }
 prettyplease = "0.2.15"
-syn = { version = "2.0", features = ["full", "printing", "visit-mut", "extra-traits"] }
+syn = { version = "2.0", features = ["full", "printing", "parsing", "visit-mut", "extra-traits"] }
