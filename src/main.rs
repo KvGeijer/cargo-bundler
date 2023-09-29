@@ -21,6 +21,6 @@ fn main() {
 
     match cargo_bundler::bundle_project(&path, args.binary) {
         Ok(code) => println!("{code}"),
-        Err(reason) => eprintln!("{reason}"),
+        Err(reason) => eprintln!("ERROR: {reason}"),
     }
 }
