@@ -2,12 +2,14 @@ use syn::visit_mut::VisitMut;
 
 use crate::Result;
 
+/// Visits all inline modules and adds a the use_item to each of those modules, creating a link as if to an external crate or library
 pub fn link_ast(mut ast: syn::File, module: &str) -> Result<syn::File> {
     // Create a new "use crate::${module};" syn item to insert into every module
     let mut fake_use_lib: syn::ItemUse = syn::parse_quote! {
         use crate::temp;
     };
 
+    // TODO: Find cleaner way to create fake ast nodes
     if let syn::UseTree::Path(ref mut path) = &mut fake_use_lib.tree {
         let new_tree = syn::UseTree::Name(syn::UseName {
             ident: syn::Ident::new(module, path.ident.span().clone()),
@@ -26,7 +28,6 @@ pub fn link_ast(mut ast: syn::File, module: &str) -> Result<syn::File> {
     Ok(ast)
 }
 
-/// Visits all inline modules and adds a the use_item to each of those modules, creating a link as if to an external crate or library
 struct Linker {
     use_item: syn::ItemUse,
 }

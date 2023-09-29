@@ -7,16 +7,17 @@ use std::{
     process::exit,
 };
 
-struct Flattener<'a> {
-    mod_folder_path: &'a Path,
-}
-
-pub fn flatten_ast(mut ast: syn::File, path: &Path) -> Result<syn::File> {
+/// Inlines all mod declarations in the ast. Needs the dir of the source file in the ast, ast to be able to find module files
+pub fn flatten_ast(mut ast: syn::File, ast_dir_path: &Path) -> Result<syn::File> {
     let mut flattener = Flattener {
-        mod_folder_path: path,
+        mod_folder_path: ast_dir_path,
     };
     flattener.visit_file_mut(&mut ast);
     Ok(ast)
+}
+
+struct Flattener<'a> {
+    mod_folder_path: &'a Path,
 }
 
 // TODO: Can probably be optimized by eg. not visiting expressions.

@@ -1,6 +1,7 @@
 use std::{fs, path::Path};
 
 mod cargo_parser;
+mod crate_path_injecter;
 mod flattener;
 mod linker;
 
@@ -47,8 +48,10 @@ fn merge_into(
     merging_ast: syn::File,
     merging_name: &str,
 ) -> Result<syn::File> {
-    let mut linked_target_ast = linker::link_ast(target_ast, merging_name)?;
+    // Update all paths in merging ast which use crate, as they will be invalidated during merge
+    let inj_merging_ast = crate_path_injecter::inject_crate_paths(merging_ast, merging_name)?;
 
+    // Create a new mod item, to contain the flattened library
     let name_ident: syn::Ident = syn::parse_str(merging_name).expect("Failed to parse identifier");
     let mut merge_mod: syn::ItemMod = syn::parse_quote! {
         mod temp {}
@@ -58,9 +61,13 @@ fn merge_into(
     // TODO: Inherit attributes from library into main
     // Move all everything from the merging ast into a new module, with the merging_name
     if let Some((_, ref mut items)) = &mut merge_mod.content {
-        *items = merging_ast.items;
+        *items = inj_merging_ast.items;
     }
 
+    // Link in the library module to all modules in the binary tree
+    let mut linked_target_ast = linker::link_ast(target_ast, merging_name)?;
+
+    // Merge the new module into the target ast
     linked_target_ast.items.insert(0, merge_mod.into());
 
     Ok(linked_target_ast)
