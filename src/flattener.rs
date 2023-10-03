@@ -26,13 +26,10 @@ impl<'a> VisitMut for Flattener<'a> {
         syn::visit_mut::visit_item_mod_mut(self, item);
 
         // Inline the module into the syntax tree
-        match self.inline_mod(item) {
-            Ok(_) => (),
-            Err(reason) => {
-                // TODO: Not very nice to error out here when we propagate results in all other parts of the code...
-                eprintln!("{reason}");
-                exit(1)
-            }
+        if let Err(reason) = self.inline_mod(item) {
+            // TODO: Not very nice to error out here when we propagate results in all other parts of the code...
+            eprintln!("FLATTENING ERROR: {reason}");
+            exit(1)
         };
     }
 }
@@ -44,10 +41,9 @@ impl<'a> Flattener<'a> {
             return Ok(());
         }
 
-        let mod_path = find_mod_file(&item.ident.to_string(), self.mod_folder_path)?;
-        let mod_folder = self
-            .mod_folder_path
-            .join(mod_path.file_name().expect("Found file must have name"));
+        let mod_name = item.ident.to_string();
+        let mod_path = find_mod_file(&mod_name, self.mod_folder_path)?;
+        let mod_folder = self.mod_folder_path.join(mod_name);
 
         let mod_file_str = fs::read_to_string(&mod_path)
             .map_err(|err| format!("Could not read mod file: {}", err.to_string()))?;

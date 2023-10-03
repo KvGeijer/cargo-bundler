@@ -1,0 +1,10 @@
+[package]
+name = "import_mod_without_mod_rs"
+version = "0.1.0"
+authors = ["Michele Bianchi <michele.bianchi@embark-studios.com>", "Kåre von Geijer <kare.kvg@gmail.com>"]
+edition = "2021"
+
+[lib]
+name = "my_lib"
+
+[dependencies]

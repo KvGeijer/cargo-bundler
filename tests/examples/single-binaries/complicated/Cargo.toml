@@ -1,0 +1,10 @@
+[package]
+name = "complicated"
+version = "0.1.0"
+authors = ["Slava Shklyaev <slava@slava.sh>", "Kåre von Geijer <kare.kvg@gmail.com>"]
+edition = "2021"
+
+[lib]
+name = "my_lib"
+
+[dependencies]
